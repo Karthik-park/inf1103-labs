@@ -30,31 +30,3 @@ def generate_report(total_units, failed_attempts):
     print("Number of Failed/Rejected Entries: " + str(failed_attempts))
 
 
-# Main program
-total_inventory = 0
-failed_attempts = 0
-
-while True:
-    result = get_valid_input()
-
-    if result == "quit":
-        break
-
-    if result is None:
-        failed_attempts += 1
-        continue
-
-    quantity = result
-
-    if total_inventory + quantity > 500:
-        print("Overstock detected.")
-        failed_attempts += 1
-        break
-
-    total_inventory = process_delivery(total_inventory, quantity)
-    tax = calculate_tax(quantity)
-
-    print("Delivery added: " + str(quantity) + " | Tax on this delivery: " + str(round(tax, 2)))
-    print("Total Inventory: " + str(total_inventory))
-
-generate_report(total_inventory, failed_attempts)
