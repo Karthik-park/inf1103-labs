@@ -83,4 +83,10 @@ while True:
     print("\nNew Order Added:")
     print(str(order_id) + "," + product_name + "," + str(quantity))
 
+save_inventory(orders)
+print("\nOrder successfully saved to " + ORDERS_FILE)
+
+print("\n--- Final Report ---")
+print("Total Orders Processed: " + str(len(orders)))
+print("Number of Failed/Rejected Entries: " + str(failed_attempts))
 
