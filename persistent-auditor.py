@@ -59,4 +59,33 @@ def next_order_id(orders):
         return 1001
     return max(order_id for order_id, _, _ in orders) + 1
 
+# Main program
+orders = load_inventory()
+failed_attempts = 0
 
+display_orders(orders)
+
+while True:
+    print()
+    product_name = input("Enter Product Name: ")
+
+    if product_name.lower() == "quit":
+        break
+
+    quantity = get_valid_quantity()
+    if quantity is None:
+        failed_attempts += 1
+        continue
+
+    order_id = next_order_id(orders)
+    orders.append((order_id, product_name, quantity))
+
+    print("\nNew Order Added:")
+    print(str(order_id) + "," + product_name + "," + str(quantity))
+
+save_inventory(orders)
+print("\nOrder successfully saved to " + ORDERS_FILE)
+
+print("\n--- Final Report ---")
+print("Total Orders Processed: " + str(len(orders)))
+print("Number of Failed/Rejected Entries: " + str(failed_attempts))
