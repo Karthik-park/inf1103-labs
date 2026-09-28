@@ -1,4 +1,6 @@
 import re
+import calendar
+from datetime import date
 
 
 # ---------------------------------------------------------------------------
@@ -45,8 +47,8 @@ def get_email():
 
 
 def get_phone():
-    """Collects and validates a phone number (digits, spaces, +, -, () allowed)."""
-    pattern = r"^[\d\s\+\-\(\)]{7,20}$"
+    """Collects and validates a phone number (digits, spaces, + allowed)."""
+    pattern = r"^[\d\s\+\-\(\)]{8,10}$"
     while True:
         phone = input("Enter your phone number: ").strip()
         if not re.match(pattern, phone):
@@ -133,8 +135,73 @@ def get_linkedin_or_portfolio():
 
 
 # ---------------------------------------------------------------------------
-# Job experience (repeatable entry)
+# Job experience (repeatable entry, optional overall)
 # ---------------------------------------------------------------------------
+
+def get_month(prompt="Month (1-12): "):
+    """Collects and validates a month number (1-12)."""
+    while True:
+        entry = input(prompt).strip()
+        try:
+            month_num = int(entry)
+        except ValueError:
+            print("Please enter a valid month number (1-12). Try again.")
+            continue
+        if month_num < 1 or month_num > 12:
+            print("Month must be between 1 and 12. Try again.")
+            continue
+        return month_num
+
+
+def get_year(prompt=None, min_year=1950):
+    """Collects and validates a year, no later than the current year."""
+    current_year = date.today().year
+    if prompt is None:
+        prompt = f"Year (e.g., {current_year}): "
+    while True:
+        entry = input(prompt).strip()
+        try:
+            year_num = int(entry)
+        except ValueError:
+            print("Please enter a valid year. Try again.")
+            continue
+        if year_num < min_year or year_num > current_year:
+            print(f"Please enter a realistic year ({min_year}-{current_year}). Try again.")
+            continue
+        return year_num
+
+
+def get_duration():
+    """
+    Collects a sanitized duration by asking for a start month/year,
+    whether the job is current, and (if not) an end month/year.
+    Returns a formatted string, e.g. "Jan 2022 - Present" or
+    "Jan 2022 - Mar 2024".
+    """
+    print("Start date:")
+    start_month = get_month("Starting month (1-12): ")
+    start_year = get_year("Starting year (e.g., 2022): ")
+
+    while True:
+        currently_working = input("Are you currently working here? (yes/no): ").strip().lower()
+        if currently_working in ("yes", "y"):
+            start_label = f"{calendar.month_abbr[start_month]} {start_year}"
+            return f"{start_label} - Present"
+        elif currently_working in ("no", "n"):
+            print("End date:")
+            while True:
+                end_month = get_month("Ending month (1-12): ")
+                end_year = get_year("Ending year (e.g., 2024): ")
+                if (end_year, end_month) < (start_year, start_month):
+                    print("End date cannot be before the start date. Try again.")
+                    continue
+                break
+            start_label = f"{calendar.month_abbr[start_month]} {start_year}"
+            end_label = f"{calendar.month_abbr[end_month]} {end_year}"
+            return f"{start_label} - {end_label}"
+        else:
+            print("Please enter 'yes' or 'no'.")
+
 
 def get_single_job_experience(index):
     """Collects one job experience record: company, role, duration, description."""
@@ -154,12 +221,7 @@ def get_single_job_experience(index):
             continue
         break
 
-    while True:
-        duration = input("Duration (e.g., 'Jan 2022 - Mar 2024'): ").strip()
-        if not duration:
-            print("Duration cannot be empty. Try again.")
-            continue
-        break
+    duration = get_duration()
 
     while True:
         description = input("Brief description of responsibilities/achievements: ").strip()
@@ -177,8 +239,25 @@ def get_single_job_experience(index):
 
 
 def get_job_experiences():
-    """Collects a list of job experiences by repeatedly calling get_single_job_experience()."""
+    """
+    Collects a list of job experiences by repeatedly calling
+    get_single_job_experience(). This field is optional overall:
+    the user can choose to skip it entirely and end up with an
+    empty list.
+    """
     experiences = []
+
+    while True:
+        has_experience = input(
+            "\nDo you have any work experience you'd like to add? (yes/no): "
+        ).strip().lower()
+        if has_experience in ("yes", "y"):
+            break
+        elif has_experience in ("no", "n"):
+            return experiences
+        else:
+            print("Please enter 'yes' or 'no'.")
+
     print("\nLet's add your work experience.")
     while True:
         experiences.append(get_single_job_experience(len(experiences) + 1))
@@ -230,8 +309,100 @@ def collect_resume_input():
         "portfolio_url": portfolio_url,
     }
 
-    print_summary(record)
+    record = review_and_confirm(record)
     return record
+
+
+# ---------------------------------------------------------------------------
+# Review, edit, and final confirmation
+# ---------------------------------------------------------------------------
+
+def edit_field(record):
+    """Displays a menu of fields and lets the user re-collect the one they pick."""
+    fields = {
+        "1": "name",
+        "2": "age",
+        "3": "email",
+        "4": "phone",
+        "5": "location",
+        "6": "qualification",
+        "7": "skills",
+        "8": "job_experiences",
+        "9": "desired_job",
+        "10": "portfolio_url",
+    }
+
+    print("\nWhich field would you like to fix?")
+    for key, value in fields.items():
+        print(f"  {key}. {value.replace('_', ' ').title()}")
+
+    while True:
+        choice = input("Enter choice: ").strip()
+        if choice not in fields:
+            print("Invalid choice. Try again.")
+            continue
+        break
+
+    field = fields[choice]
+
+    if field == "name":
+        record["name"] = get_name()
+    elif field == "age":
+        record["age"] = get_age()
+    elif field == "email":
+        record["email"] = get_email()
+    elif field == "phone":
+        record["phone"] = get_phone()
+    elif field == "location":
+        record["location"] = get_location()
+    elif field == "qualification":
+        record["qualification"] = get_qualification()
+    elif field == "skills":
+        record["skills"] = get_skills()
+    elif field == "job_experiences":
+        record["job_experiences"] = get_job_experiences()
+    elif field == "desired_job":
+        record["desired_job"] = get_desired_job_description()
+    elif field == "portfolio_url":
+        record["portfolio_url"] = get_linkedin_or_portfolio()
+
+    return record
+
+
+def review_and_confirm(record):
+    """
+    Shows the collected data, lets the user correct any field as many
+    times as needed, then issues a final warning that the next
+    confirmation locks the submission in before returning the record.
+    """
+    while True:
+        print_summary(record)
+
+        choice = input(
+            "\nWould you like to correct any information above? (yes/no): "
+        ).strip().lower()
+        while choice not in ("yes", "y", "no", "n"):
+            choice = input("Please enter 'yes' or 'no': ").strip().lower()
+
+        if choice in ("yes", "y"):
+            record = edit_field(record)
+            continue
+
+        print("\n" + "!" * 50)
+        print("WARNING: This is your LAST CHANCE to make changes.")
+        print("Once confirmed, your submission will be final.")
+        print("!" * 50)
+
+        final_confirm = input(
+            "Are you sure you want to submit this information as final? (yes/no): "
+        ).strip().lower()
+        while final_confirm not in ("yes", "y", "no", "n"):
+            final_confirm = input("Please enter 'yes' or 'no': ").strip().lower()
+
+        if final_confirm in ("yes", "y"):
+            print("\nYour information has been submitted successfully.")
+            return record
+        # If "no", loop back to show the summary and allow more edits.
 
 
 # ---------------------------------------------------------------------------
@@ -247,13 +418,16 @@ def print_summary(record):
     print(f"Age:             {record['age']}")
     print(f"Email:           {record['email']}")
     print(f"Phone:           {record['phone']}")
-    print(f"Location:        {record['location']}")
+    print(f"Location:        {record['location']}")#Optional
     print(f"Qualification:   {record['qualification']}")
     print(f"Skills:          {', '.join(record['skills'])}")
     print(f"Desired Job:     {record['desired_job']}")
-    print(f"Portfolio/URL:   {record['portfolio_url'] or 'Not provided'}")
-    print(f"\nWork Experience ({len(record['job_experiences'])} entries):")
-    for i, job in enumerate(record["job_experiences"], start=1):
-        print(f"  {i}. {job['role']} at {job['company']} ({job['duration']})")
-        print(f"     {job['description']}")
+    print(f"Portfolio/URL:   {record['portfolio_url'] or 'Not provided'}")#Optional
+    if record["job_experiences"]:
+        print(f"\nWork Experience ({len(record['job_experiences'])} entries):")#Optional
+        for i, job in enumerate(record["job_experiences"], start=1):
+            print(f"  {i}. {job['role']} at {job['company']} ({job['duration']})")
+            print(f"     {job['description']}")
+    else:
+        print("\nWork Experience:  None provided")
     print("=" * 50)
