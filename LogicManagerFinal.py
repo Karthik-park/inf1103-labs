@@ -42,3 +42,10 @@ def process_job_descriptions(record, ai_job_descriptions):
 
     record["job_experiences"] = jobs
     return record
+
+def sanitize_filename(filename):
+    # Remove any characters that are not alphanumeric, spaces, underscores, or hyphens
+    sanitized = re.sub(r'[^\w\s-]', '', filename)
+    # Replace spaces with underscores
+    sanitized = re.sub(r'\s+', '_', sanitized)
+    return sanitized
