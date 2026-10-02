@@ -15,6 +15,7 @@ from reportlab.platypus import (
     HRFlowable,
 )
 
+#Process_job_descriptions uses previous functions to allow user to choose options and make edits if he wants.
 def process_job_descriptions(record, ai_job_descriptions):
     jobs = record.get("job_experiences", [])
     
@@ -43,9 +44,6 @@ def process_job_descriptions(record, ai_job_descriptions):
     record["job_experiences"] = jobs
     return record
 
+#Cleans the end product pdf file to remove any unwanted characters.
 def sanitize_filename(filename):
-    # Remove any characters that are not alphanumeric, spaces, underscores, or hyphens
-    sanitized = re.sub(r'[^\w\s-]', '', filename)
-    # Replace spaces with underscores
-    sanitized = re.sub(r'\s+', '_', sanitized)
-    return sanitized
+    
