@@ -46,4 +46,60 @@ def process_job_descriptions(record, ai_job_descriptions):
 
 #Cleans the end product pdf file to remove any unwanted characters.
 def sanitize_filename(filename):
+    cleaned = re.sub(r'[\\/:*?"<>|]', "", name).strip()
+    return cleaned if cleaned else "Resume"
+
+def build_styles(): #Font creation and formatting for the resume pdf file.
     
+    styles = getSampleStyleSheet()
+
+    styles.add(ParagraphStyle(
+        name="ResumeName",
+        parent=styles["Title"],
+        fontSize=22,
+        alignment=TA_CENTER,
+        spaceAfter=4,
+    ))
+
+    styles.add(ParagraphStyle(
+        name="ContactInfo",
+        parent=styles["Normal"],
+        fontSize=10,
+        alignment=TA_CENTER,
+        textColor="#444444",
+        spaceAfter=12,
+    ))
+
+    styles.add(ParagraphStyle(
+        name="SectionHeading",
+        parent=styles["Heading2"],
+        fontSize=13,
+        spaceBefore=14,
+        spaceAfter=6,
+        textColor="#1A1A1A",
+    ))
+
+    styles.add(ParagraphStyle(
+        name="JobTitle",
+        parent=styles["Normal"],
+        fontSize=11,
+        fontName="Helvetica-Bold",
+        spaceAfter=1,
+    ))
+
+    styles.add(ParagraphStyle(
+        name="JobMeta",
+        parent=styles["Normal"],
+        fontSize=9.5,
+        textColor="#555555",
+        spaceAfter=4,
+    ))
+
+    styles.add(ParagraphStyle(
+        name="BodyTextResume",
+        parent=styles["Normal"],
+        fontSize=10.5,
+        leading=14,
+    ))
+
+    return styles
