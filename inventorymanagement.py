@@ -1,6 +1,6 @@
 import json
 import os 
-ORDERS_FILE = "orders.txt"
+INVENTORY_FILE = "inventory.json"
 
 def display_products(products):
     print("\nInventory:\n")
@@ -13,30 +13,24 @@ def add_product():
     product_name = input("\nProduct Name: ")
     product_price = input("\nProduct Price: ")
     stock_quantity = input("\nStock Quantity: ")
+
     print("\nProduct added successfully!")
 
+def find_product(products):
+    print("\nSearch Product")
+    product_id = input("\nEnter Product ID: ")
+    for product in products:
+        if product[0] == product_id:
+            print(f"\nProduct Found: ID: {product[0]}, Name: {product[1]}, Price: {product[2]}, Stock: {product[3]}\n")
+            return
+    print("\nProduct not found.\n")
 
 def load_inventory():    
-    orders = []
-    try:
-        with open(ORDERS_FILE, "r") as f:
-            lines = f.read().splitlines()
-    except FileNotFoundError:
-        return orders
-
-    for line in lines:
-        parts = [p.strip() for p in line.split(",")]
-        if len(parts) != 3:
-            continue
-        try:
-            order_id = int(parts[0])
-            name = parts[1]
-            quantity = int(parts[2])
-        except ValueError:
-            continue
-        orders.append((order_id, name, quantity))
-
-    return orders
+    if os.path.exists(INVENTORY_FILE):
+        with open(INVENTORY_FILE, "r") as f:
+            return json.load(f)
+    else:
+        
 
 
 def save_inventory(orders):
