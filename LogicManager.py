@@ -459,3 +459,5 @@ if __name__ == "__main__":
     final_record = run_logic_manager(demo_record, demo_ai_results)
     print("\nFinal record:")
     print(final_record)
+
+    #CHeck if the PDF was generated successfully
