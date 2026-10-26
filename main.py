@@ -3,6 +3,16 @@ import json
 
 inventory = Inventory()
 
+# Load any previously saved products so they aren't lost when the program restarts
+try:
+    with open("inventory.json", "r") as file:
+        for item in json.load(file):
+            inventory.add_product(Product(item["productid"], item["name"],
+                                          item["price"], item["stock"]))
+except (FileNotFoundError, json.JSONDecodeError):
+    pass
+ 
+
 print("Welcome to the Inventory Management System")
 print("========================================")
 print("1. Add Product")
