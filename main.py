@@ -12,6 +12,18 @@ try:
 except (FileNotFoundError, json.JSONDecodeError):
     pass
  
+def save_to_json():
+    # A Product object can't be written to JSON directly, so convert each one to a dict
+    data = []
+    for product in inventory._Inventory__products:
+        data.append({
+            "productid": product._Product__productid,
+            "name": product._Product__name,
+            "price": product._Product__price,
+            "stock": product._Product__stock,
+        })
+    with open("inventory.json", "w") as file:
+        json.dump(data, file, indent=4)
 
 print("Welcome to the Inventory Management System")
 print("========================================")
@@ -31,8 +43,7 @@ while input_choice != "4":
         new_product = Product(product_id, name, price, stock)
         
         inventory.add_product(new_product)
-        with open ("inventory.json", "w") as file:
-            json.dump(new_product,file, indent=4)
+        save_to_json()
         print("Product added successfully!")
 
     elif input_choice == "2":
