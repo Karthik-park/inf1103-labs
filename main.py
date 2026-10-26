@@ -3,7 +3,7 @@ import json
 
 inventory = Inventory()
 
-# Load any previously saved products so they aren't lost when the program restarts
+
 try:
     with open("inventory.json", "r") as file:
         for item in json.load(file):
@@ -13,7 +13,7 @@ except (FileNotFoundError, json.JSONDecodeError):
     pass
  
 def save_to_json():
-    # A Product object can't be written to JSON directly, so convert each one to a dict
+    
     data = []
     for product in inventory._Inventory__products:
         data.append({
@@ -29,12 +29,13 @@ print("Welcome to the Inventory Management System")
 print("========================================")
 print("1. Add Product")
 print("2. Search Product")
-print("3. Display Inventory")
-print("4. Exit")
-input_choice = input("Enter your choice (1-4): ")
+print("3. Update Stock")
+print("4. Display Inventory")
+print("5. Exit")
+input_choice = input("Enter your choice (1-5): ")
 
 
-while input_choice != "4":
+while input_choice != "5":
     if input_choice == "1":
         product_id = int(input("Enter Product ID: "))
         name = input("Enter Product Name: ")
@@ -58,23 +59,40 @@ while input_choice != "4":
             print("Product not found.")
 
     elif input_choice == "3":
+        update_id = int(input("Enter Product ID to update stock: "))
+        found = False
+        for product in inventory._Inventory__products:
+            if product._Product__productid == update_id:
+                new_stock = int(input("Enter new stock quantity: "))
+                product.update_stock(new_stock)
+                save_to_json()
+                print("Stock updated successfully!")
+                found = True
+                break
+        if not found:
+            print("Product not found.")
+
+    elif input_choice == "4":
+        print("Inventory from JSON file:")
         inventory.display_inventory()
         with open("inventory.json", "r") as file:
             products_data = json.load(file)
-            print("Inventory from JSON file:")
-            print(json.dumps(products_data, indent=4))
+            
+            
             
         
 
-    elif input_choice == "4":
+    elif input_choice == "5":
         print("Exiting the Inventory Management System.")
+
     else:
-        print("Invalid choice. Please enter a number between 1 and 4.")
+        print("Invalid choice. Please enter a number between 1 and 5.")
 
     print("Welcome to the Inventory Management System")
     print("========================================")
     print("1. Add Product")
     print("2. Search Product")
-    print("3. Display Inventory")
-    print("4. Exit")
-    input_choice = input("Enter your choice (1-4): ")
+    print("3. Update Stock")
+    print("4. Display Inventory")
+    print("5. Exit")
+    input_choice = input("Enter your choice (1-5): ")
