@@ -64,3 +64,26 @@ def add_product():
     inventory.add_product(new_product)
     save_to_json()
     print("Product added successfully!")
+
+def search_product():
+    search_id = int(input("Enter Product ID to search: "))
+    product = inventory.find_product(search_id)
+    if product is None:
+        print("Product not found.")
+        return
+    product.display_information()
+    print(product.get_fulfilment_info())
+    if isinstance(product, PhysicalProduct):
+        print(f"Shipping Cost: ${product.calculate_shipping_cost():.2f}")
+ 
+ 
+def update_stock():
+    update_id = int(input("Enter Product ID to update stock: "))
+    product = inventory.find_product(update_id)
+    if product is None:
+        print("Product not found.")
+        return
+    quantity = int(input("Enter quantity to add (use a negative number to remove): "))
+    product.update_stock(quantity)
+    save_to_json()
+    print(f"Stock updated successfully! New stock: {product.get_stock()} units")
