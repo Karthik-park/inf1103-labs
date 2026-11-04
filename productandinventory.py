@@ -14,6 +14,18 @@ class Product(ABC):
         self.__price = __price
         self.__stock = __stock
 
+    def get_productid(self):
+        return self.__productid
+ 
+    def get_name(self):
+        return self.__name
+ 
+    def get_price(self):
+        return self.__price
+ 
+    def get_stock(self):
+        return self.__stock
+    
     def update_stock(self, quantity):
         self.__stock += quantity
 
@@ -23,6 +35,15 @@ class Product(ABC):
         print(f"Price: ${self.__price:.2f}")
         print(f"Stock: {self.__stock} units")
 
+    def to_dict(self):
+        """Common data for saving to JSON. Children add their own extras."""
+        return {
+            "productid": self.__productid,
+            "name": self.__name,
+            "price": self.__price,
+            "stock": self.__stock,
+        }
+    
     @abstractmethod
     def getfulfillment_info(self):
         pass
