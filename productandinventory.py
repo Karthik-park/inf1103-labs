@@ -95,8 +95,7 @@ class DigitalProduct(Product):
         data["download_size"] = self.__download_size
         return data
     
-product1 = Product(101, "Laptop", 999.99, 10)
-product1.display_information()
+
 
 class Inventory:
 
