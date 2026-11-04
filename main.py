@@ -72,7 +72,7 @@ def search_product():
         print("Product not found.")
         return
     product.display_information()
-    print(product.get_fulfilment_info())
+    print(product.getfulfillment_info())
     if isinstance(product, PhysicalProduct):
         print(f"Shipping Cost: ${product.calculate_shipping_cost():.2f}")
  
@@ -87,3 +87,31 @@ def update_stock():
     product.update_stock(quantity)
     save_to_json()
     print(f"Stock updated successfully! New stock: {product.get_stock()} units")
+
+def main():
+    load_from_json()
+    choice = show_menu()
+ 
+    while choice != "5":
+        try:
+            if choice == "1":
+                add_product()
+            elif choice == "2":
+                search_product()
+            elif choice == "3":
+                update_stock()
+            elif choice == "4":
+                print("Current Inventory:")
+                inventory.display_inventory()
+            else:
+                print("Invalid choice. Please enter a number between 1 and 5.")
+        except ValueError:
+            print("Invalid input. Please enter a number where one is expected.")
+ 
+        choice = show_menu()
+ 
+    print("Exiting the Inventory Management System.")
+ 
+ 
+if __name__ == "__main__":
+    main()
