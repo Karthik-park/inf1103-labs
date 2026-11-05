@@ -1,31 +1,33 @@
 from abc import ABC, abstractmethod
 
-class CanBeShipped  (ABC):
+
+class CanBeShipped(ABC):
 
     @abstractmethod
     def calculate_shipping_cost(self):
         pass
 
+
 class Product(ABC):
 
-    def __init__(self, __productid, __name, __price, __stock):
-        self.__productid = __productid
-        self.__name = __name
-        self.__price = __price
-        self.__stock = __stock
+    def __init__(self, productid, name, price, stock):
+        self.__productid = productid
+        self.__name = name
+        self.__price = price
+        self.__stock = stock
 
     def get_productid(self):
         return self.__productid
- 
+
     def get_name(self):
         return self.__name
- 
+
     def get_price(self):
         return self.__price
- 
+
     def get_stock(self):
         return self.__stock
-    
+
     def update_stock(self, quantity):
         self.__stock += quantity
 
@@ -35,18 +37,19 @@ class Product(ABC):
         print(f"Price: ${self.__price:.2f}")
         print(f"Stock: {self.__stock} units")
 
+    # used when saving to the json file
     def to_dict(self):
-        """Common data for saving to JSON. Children add their own extras."""
         return {
             "productid": self.__productid,
             "name": self.__name,
             "price": self.__price,
             "stock": self.__stock,
         }
-    
+
     @abstractmethod
-    def getfulfillment_info(self):
+    def get_fulfilment_info(self):
         pass
+
 
 class PhysicalProduct(Product, CanBeShipped):
 
@@ -58,21 +61,23 @@ class PhysicalProduct(Product, CanBeShipped):
         return self.__weight
 
     def display_information(self):
-        super().display_information()          # parent prints the common info
-        print(f"Weight: {self.__weight} kg") 
+        super().display_information()
+        print(f"Weight: {self.__weight} kg")
 
+    # $0.50 per kg
     def calculate_shipping_cost(self):
-        return self.__weight * 0.5  
+        return self.__weight * 0.5
 
-    def getfulfillment_info(self):
-        return f"Physical Product: {self._Product__name}, Weight: {self.__weight} kg"
+    def get_fulfilment_info(self):
+        return f"Physical Product: {self.get_name()}, Weight: {self.__weight} kg"
 
     def to_dict(self):
         data = super().to_dict()
         data["type"] = "physical"
         data["weight"] = self.__weight
         return data
-    
+
+
 class DigitalProduct(Product):
 
     def __init__(self, productid, name, price, stock, file_size):
@@ -86,7 +91,7 @@ class DigitalProduct(Product):
         super().display_information()
         print(f"Download Size: {self.__download_size} MB")
 
-    def getfulfillment_info(self):
+    def get_fulfilment_info(self):
         return "This product is a digital download and does not require shipping."
 
     def to_dict(self):
@@ -94,7 +99,6 @@ class DigitalProduct(Product):
         data["type"] = "digital"
         data["download_size"] = self.__download_size
         return data
-    
 
 
 class Inventory:
@@ -113,9 +117,9 @@ class Inventory:
             if product.get_productid() == productid:
                 return product
         return None
-    
+
     def display_inventory(self):
         for product in self.__products:
             product.display_information()
-            print(product.getfulfillment_info())
+            print(product.get_fulfilment_info())
             print("-" * 20)
