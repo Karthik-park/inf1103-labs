@@ -44,7 +44,7 @@ class Product(ABC):
     # used when saving to the json file
     def to_dict(self):
         return {
-            "product_id": self.__productid,
+            "product_id": self.__product_id,
             "name": self.__name,
             "price": self.__price,
             "stock": self.__stock,
