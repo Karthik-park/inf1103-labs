@@ -4,8 +4,8 @@ from supplier import Supplier
 
 class DigitalProduct(Product):
 
-    def __init__(self, productid, name, price, stock, file_size):
-        super().__init__(productid, name, price, stock)
+    def __init__(self, product_id: str, name: str, price: float, stock: int, file_size: float):
+        super().__init__(product_id, name, price, stock)
         self.__download_size = file_size
 
     def get_download_size(self):
