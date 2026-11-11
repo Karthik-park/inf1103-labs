@@ -35,15 +35,16 @@ class Product(ABC):
         self.__stock += quantity
 
     def display_information(self):
-        print(f"Product ID: {self.__productid}")
+        print(f"Product ID: {self.__product_id}")
         print(f"Name: {self.__name}")
         print(f"Price: ${self.__price:.2f}")
         print(f"Stock: {self.__stock} units")
+        print(f"Supplier: {self.__supplier.get_name()}")
 
     # used when saving to the json file
     def to_dict(self):
         return {
-            "productid": self.__productid,
+            "product_id": self.__productid,
             "name": self.__name,
             "price": self.__price,
             "stock": self.__stock,
