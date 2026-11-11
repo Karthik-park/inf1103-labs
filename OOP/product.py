@@ -17,7 +17,7 @@ class Product(ABC):
             self.__supplier: Supplier = supplier
 
     def get_product_id(self) -> str:
-        return self.__productid
+        return self.__product_id
 
     def get_name(self):
         return self.__name
