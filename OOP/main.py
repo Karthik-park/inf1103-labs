@@ -155,8 +155,14 @@ while True:
         elif choice == "3":
             update_stock()
         elif choice == "4":
-            inventory.display_inventory()
+            inventory.display_all_products()      # display_inventory() doesn't exist
         elif choice == "5":
+            remove_product()
+        elif choice == "6":
+            create_order()
+        elif choice == "7":
+            show_orders()
+        elif choice == "8":
             print("Exiting the Inventory Management System.")
             break
         else:
