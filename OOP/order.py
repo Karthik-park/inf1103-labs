@@ -13,7 +13,17 @@ class Order:
         return self.__order_id
  
     def add_order_line(self, product: Product, quantity: int) -> None:
-        # composition: the order makes its own lines,
-        # you pass in a product and quantity, not a ready-made OrderLine
+       
         order_line = OrderLine(product, quantity)
         self.__order_lines.append(order_line)
+
+    def remove_order_line(self, product_id: str) -> bool:
+        for line in self.__order_lines:
+            if line.get_product().get_product_id() == product_id:
+                self.__order_lines.remove(line)
+                return True
+        return False  
+ 
+    def get_order_lines(self) -> list[OrderLine]:
+        
+        return list(self.__order_lines)
