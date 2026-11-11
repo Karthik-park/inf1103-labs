@@ -21,14 +21,16 @@ def load_inventory():
     for item in data.get("suppliers", []):
         supplier = Supplier(item["supplier_id"], item["name"], item["contact_email"])
         suppliers[supplier.get_supplier_id()] = supplier
-
-    for item in data:
+    for item in data.get("products", []):
+        supplier = suppliers.get(item["supplier_id"])
+        if supplier is None:
+            continue
         if item.get("type") == "physical":
-            product = PhysicalProduct(item["productid"], item["name"], item["price"],
-                                      item["stock"], item["weight"])
+            product = PhysicalProduct(item["product_id"], item["name"], item["price"],
+                                      item["stock"], supplier, item["weight"])
         elif item.get("type") == "digital":
-            product = DigitalProduct(item["productid"], item["name"], item["price"],
-                                     item["stock"], item["download_size"])
+            product = DigitalProduct(item["product_id"], item["name"], item["price"],
+                                     item["stock"], supplier, item["download_size"])
         else:
             continue
         inventory.add_product(product)
@@ -59,7 +61,7 @@ def add_product():
         print("Please enter p or d.")
         return
 
-    product_id = int(input("Enter Product ID: "))
+    product_id = input("Enter Product ID: ").strip()
     if inventory.find_product(product_id):
         print("That product ID already exists.")
         return
@@ -67,13 +69,13 @@ def add_product():
     name = input("Enter Product Name: ")
     price = float(input("Enter Product Price: "))
     stock = int(input("Enter Product Stock: "))
-
+    supplier = choose_supplier()
     if p_type == "p":
         weight = float(input("Enter Weight (kg): "))
-        product = PhysicalProduct(product_id, name, price, stock, weight)
+        product = PhysicalProduct(product_id, name, price, stock, supplier, weight)
     else:
         size = float(input("Enter Download Size (MB): "))
-        product = DigitalProduct(product_id, name, price, stock, size)
+        product = DigitalProduct(product_id, name, price, stock, supplier , size)
 
     inventory.add_product(product)
     save_to_json()
@@ -81,7 +83,7 @@ def add_product():
 
 
 def search_product():
-    search_id = int(input("Enter Product ID to search: "))
+    search_id = input("Enter Product ID to search: ").strip()
     product = inventory.find_product(search_id)
 
     if product:
@@ -94,7 +96,7 @@ def search_product():
 
 
 def update_stock():
-    update_id = int(input("Enter Product ID to update stock: "))
+    update_id = input("Enter Product ID to update stock: ").strip()
     product = inventory.find_product(update_id)
 
     if product:
