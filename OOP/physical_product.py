@@ -1,14 +1,15 @@
 
 from CanBeShipped import CanBeShipped
-
+from supplier import Supplier
 from product import Product
 
 
 class PhysicalProduct(Product, CanBeShipped):
 
-    def __init__(self, productid, name, price, stock, weight):
-        super().__init__(productid, name, price, stock)
-        self.__weight = weight
+    def __init__(self, product_id: str, name: str, price: float,
+                 stock: int, supplier: Supplier, weight: float):
+        super().__init__(product_id, name, price, stock, supplier)
+        self.__weight: float = weight
 
     def get_weight(self):
         return self.__weight
