@@ -27,3 +27,18 @@ class Order:
     def get_order_lines(self) -> list[OrderLine]:
         
         return list(self.__order_lines)
+
+    def calculate_total(self) -> float:
+        
+        return sum(line.calculate_subtotal() for line in self.__order_lines)
+ 
+    def display_order(self) -> None:
+        print(f"Order {self.__order_id}")
+ 
+        if not self.__order_lines:
+            print("No items in this order.")
+        else:
+            for line in self.__order_lines:
+                line.display_information()
+ 
+        print(f"Total: ${self.calculate_total():.2f}")
