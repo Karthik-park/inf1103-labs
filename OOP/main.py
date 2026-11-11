@@ -145,7 +145,11 @@ while True:
     print("3. Update Stock")
     print("4. Display Inventory")
     print("5. Exit")
-    choice = input("Enter your choice (1-5): ")
+    print("5. Remove Product")
+    print("6. Create Order")
+    print("7. View Orders")
+    print("8. Exit")
+    choice = input("Enter your choice (1-8): ")
 
     try:
         if choice == "1":
