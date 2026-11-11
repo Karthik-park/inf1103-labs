@@ -14,4 +14,14 @@ class OrderLine:
     def get_product(self) -> Product:
         return self.__product
 
+    def get_quantity(self) -> int:
+        return self.__quantity
+ 
+    def calculate_subtotal(self) -> float:
+        return self.__product.get_price() * self.__quantity
+ 
+    def display_information(self) -> None:
+        name = self.__product.get_name()
+        print(f"{name} x {self.__quantity} = ${self.calculate_subtotal():.2f}")
+
     
