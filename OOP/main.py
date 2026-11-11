@@ -42,6 +42,16 @@ def save_to_json():
     with open("inventory.json", "w") as file:
         json.dump(data, file, indent=4)
 
+def choose_supplier() -> Supplier:
+    supplier_id = input("Enter Supplier ID: ").strip()
+    if supplier_id in suppliers:
+        print(f"Using existing supplier: {suppliers[supplier_id].get_name()}")
+        return suppliers[supplier_id]
+    name = input("New supplier - enter name: ")
+    email = input("Enter contact email: ")
+    supplier = Supplier(supplier_id, name, email)
+    suppliers[supplier_id] = supplier
+    return supplier
 
 def add_product():
     p_type = input("Is it a physical or digital product? (p/d): ").lower()
