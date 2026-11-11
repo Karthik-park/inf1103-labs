@@ -127,6 +127,14 @@ def create_order() -> None:
     orders.append(order)
     order.display_order()
 
+def show_orders() -> None:
+    if not orders:
+        print("No orders yet.")
+        return
+ 
+    for order in orders:
+        order.display_order()
+        print("-" * 20)
 load_inventory()
 
 while True:
