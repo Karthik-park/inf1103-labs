@@ -151,7 +151,7 @@ def create_order() -> None:
     order_id = input("Enter Order ID: ").strip()
     order = Order(order_id)
  
-    # keep adding items until the user just presses enter
+    
     while True:
         product_id = input("Enter Product ID to add (blank to finish): ").strip()
         if product_id == "":
