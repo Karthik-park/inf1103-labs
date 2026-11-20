@@ -1,15 +1,26 @@
-from product import Product
-from digital_product import DigitalProduct
-from physical_product import PhysicalProduct
+from __future__ import annotations
+from CanBeShipped import CanBeShipped
+from discount_strategy import (BulkDiscount, DiscountStrategy, NoDiscount,
+                               PercentageDiscount, StudentDiscount)
+from input_helpers import get_int, get_non_negative_int, get_positive_float, get_positive_int
 from inventory import Inventory
 from order import Order
+from product_factory import ProductFactory
 from supplier import Supplier
 import json
 
+DATA_FILE = "inventory.json"
 
 inventory = Inventory()
 suppliers: dict[str, Supplier] = {}
 orders: list[Order] = []
+
+DISCOUNT_OPTIONS = {
+    "1": ("No discount", lambda: NoDiscount()),
+    "2": ("10% off", lambda: PercentageDiscount(10)),
+    "3": ("$20 off orders of $200 or more", lambda: BulkDiscount(200, 20)),
+    "4": ("Student discount (5% off)", lambda: StudentDiscount()),
+}
 
 
 def load_inventory():
