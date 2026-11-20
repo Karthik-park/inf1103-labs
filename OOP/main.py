@@ -22,27 +22,33 @@ DISCOUNT_OPTIONS = {
     "4": ("Student discount (5% off)", lambda: StudentDiscount()),
 }
 
+def make_discount(choice: str) -> DiscountStrategy:
+    _, build = DISCOUNT_OPTIONS.get(choice, DISCOUNT_OPTIONS["1"])
+    return build()
 
 def load_inventory():
     try:
-        with open("inventory.json", "r") as file:
+        with open("DATA_FILE", "r") as file:
             data = json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         return
     for item in data.get("suppliers", []):
         supplier = Supplier(item["supplier_id"], item["name"], item["contact_email"])
         suppliers[supplier.get_supplier_id()] = supplier
+
     for item in data.get("products", []):
-        supplier = suppliers.get(item["supplier_id"])
-        if supplier is None:
+        try:
+            supplier = suppliers[item["supplier_id"]]
+            product = ProductFactory.create(
+                item["type"], item["product_id"], item["name"], item["price"],
+                item["stock"], supplier,
+                weight=item.get("weight", 0.0),
+                download_size=item.get("download_size", 0.0))
+        except KeyError as missing:
+            print(f"Skipped product {item.get('product_id', '?')}: missing {missing}.")
             continue
-        if item.get("type") == "physical":
-            product = PhysicalProduct(item["product_id"], item["name"], item["price"],
-                                      item["stock"], supplier, item["weight"])
-        elif item.get("type") == "digital":
-            product = DigitalProduct(item["product_id"], item["name"], item["price"],
-                                     item["stock"], supplier, item["download_size"])
-        else:
+        except ValueError as error:
+            print(f"Skipped product {item.get('product_id', '?')}: {error}")
             continue
         inventory.add_product(product)
 
