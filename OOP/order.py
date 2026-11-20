@@ -19,6 +19,12 @@ class Order:
         order_line = OrderLine(product, quantity)
         self.__order_lines.append(order_line)
 
+    def get_discount(self) -> DiscountStrategy:
+        return self.__discount
+
+    def set_discount(self, discount: DiscountStrategy) -> None:
+        self.__discount = discount
+
     def remove_order_line(self, product_id: str) -> bool:
         for line in self.__order_lines:
             if line.get_product().get_product_id() == product_id:
@@ -43,4 +49,9 @@ class Order:
             for line in self.__order_lines:
                 line.display_information()
  
-        print(f"Total: ${self.calculate_total():.2f}")
+        subtotal = self.calculate_subtotal()
+        total = self.calculate_total()
+        if total != subtotal:
+            print(f"Subtotal: ${subtotal:.2f}")
+            print(f"Discount ({type(self.__discount).__name__}): -${subtotal - total:.2f}")
+        print(f"Total: ${total:.2f}")
