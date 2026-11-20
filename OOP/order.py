@@ -2,12 +2,14 @@ from __future__ import annotations
  
 from order_line import OrderLine
 from product import Product
+from discount_strategy import DiscountStrategy, NoDiscount
 
 class Order:
  
     def __init__(self, order_id: str):
         self.__order_id: str = order_id
         self.__order_lines: list[OrderLine] = []
+        self.__discount: DiscountStrategy = discount if discount is not None else NoDiscount()
  
     def get_order_id(self) -> str:
         return self.__order_id
