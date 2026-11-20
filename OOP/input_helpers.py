@@ -22,3 +22,22 @@ def get_positive_int(prompt: str) -> int:
             return value
         except ValueError:
             print("Please enter a whole number, e.g. 3")
+
+def get_int(prompt: str) -> int:    
+    while True:
+        try:
+            return int(input(prompt))
+        except ValueError:
+            print("Please enter a whole number, e.g. 5 or -2")
+
+
+def get_non_negative_int(prompt: str) -> int:    
+    while True:
+        try:
+            value = int(input(prompt))
+            if value < 0:
+                print("Please enter zero or more.")
+                continue
+            return value
+        except ValueError:
+            print("Please enter a whole number, e.g. 10")
