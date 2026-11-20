@@ -88,11 +88,13 @@ def add_product():
     stock = int(input("Enter Product Stock: "))
     supplier = choose_supplier()
     if p_type == "p":
-        weight = float(input("Enter Weight (kg): "))
-        product = PhysicalProduct(product_id, name, price, stock, supplier, weight)
+        weight = get_positive_float("Enter Weight (kg): ")
+        product = ProductFactory.create("physical", product_id, name, price, stock,
+                                        supplier, weight=weight)
     else:
-        size = float(input("Enter Download Size (MB): "))
-        product = DigitalProduct(product_id, name, price, stock, supplier , size)
+        size = get_positive_float("Enter Download Size (MB): ")
+        product = ProductFactory.create("digital", product_id, name, price, stock,
+                                        supplier, download_size=size)
 
     inventory.add_product(product)
     save_to_json()
@@ -106,7 +108,7 @@ def search_product():
     if product:
         product.display_information()
         print(product.get_fulfilment_info())
-        if isinstance(product, PhysicalProduct):
+        if isinstance(product, CanBeShipped):
             print(f"Shipping Cost: ${product.calculate_shipping_cost():.2f}")
     else:
         print("Product not found.")
@@ -134,6 +136,16 @@ def remove_product():
  
     save_to_json()
     print(f"{product.get_name()} removed from the inventory.")
+
+def choose_discount() -> DiscountStrategy:
+    print("Discount:")
+    for key, (label, _) in DISCOUNT_OPTIONS.items():
+        print(f"  {key}. {label}")
+    while True:
+        choice = input("Choose a discount (1-4): ").strip()
+        if choice in DISCOUNT_OPTIONS:
+            return make_discount(choice)
+        print("Please enter a number from 1 to 4.")
 
 def create_order() -> None:
     order_id = input("Enter Order ID: ").strip()
